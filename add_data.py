@@ -4,7 +4,7 @@ import mysql.connector
 from mysql.connector import Error
 
 def DBConnect(dbName=None):
-     """
+    """
     Parameters
     ----------
     dbName :
@@ -12,8 +12,7 @@ def DBConnect(dbName=None):
     Returns
     -------
     """
-    conn=mysql.connector.connect(host='localhost',port="3306", user='root', password="",
-                         database=dbName)
+    conn=mysql.connector.connect(host='localhost',port="3306", user='root', password="", database=dbName)
     cur = conn.cursor()
     return conn, cur
 def emojiDB(dbName: str) -> None:

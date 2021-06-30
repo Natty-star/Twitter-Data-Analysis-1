@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS `TweetInformation`
     `lang` TEXT DEFAULT NULL,
     `favorite_count` INT DEFAULT NULL,
     `retweet_count` INT DEFAULT NULL,
-    `original_author` TEXT DEFAULT NULL,
-    
+    `original_author` TEXT DEFAULT NULL,    
     `followers_count` INT DEFAULT NULL,
     `friends_count` INT DEFAULT NULL,
     `hashtags` TEXT DEFAULT NULL,
@@ -20,4 +19,4 @@ CREATE TABLE IF NOT EXISTS `TweetInformation`
     PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
-©
+
