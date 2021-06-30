@@ -1,10 +1,10 @@
 import os
 import pandas as pd
-import mysql.connector as mysql
+import mysql.connector
 from mysql.connector import Error
 
 def DBConnect(dbName=None):
-    """
+     """
     Parameters
     ----------
     dbName :
@@ -12,11 +12,10 @@ def DBConnect(dbName=None):
     Returns
     -------
     """
-    conn = mysql.connect(host='localhost', user='root', password='',
-                         database=dbName, buffered=True)
+    conn=mysql.connector.connect(host='localhost',port="3306", user='root', password="",
+                         database=dbName)
     cur = conn.cursor()
     return conn, cur
-
 def emojiDB(dbName: str) -> None:
     conn, cur = DBConnect(dbName)
     dbQuery = f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;"
@@ -53,7 +52,7 @@ def createTables(dbName: str) -> None:
     -------
     """
     conn, cur = DBConnect(dbName)
-    sqlFile = 'day5_schema.sql'
+    sqlFile = './schema.sql'
     fd = open(sqlFile, 'r')
     readSqlFile = fd.read()
     fd.close()
@@ -83,7 +82,7 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     Returns
     -------
     """
-    cols_2_drop = ['Unnamed: 0', 'timestamp', 'sentiment', 'possibly_sensitive', 'original_text']
+    cols_2_drop = ['Unnamed: 0', 'possibly_sensitive']
     try:
         df = df.drop(columns=cols_2_drop, axis=1)
         df = df.fillna(0)
@@ -119,13 +118,14 @@ def insert_to_tweet_table(dbName: str, df: pd.DataFrame, table_name: str) -> Non
 
     df = preprocess_df(df)
 
+   
     for _, row in df.iterrows():
-        sqlQuery = f"""INSERT INTO {table_name} (created_at, source, clean_text, polarity, subjectivity, language,
-                    favorite_count, retweet_count, original_author, screen_count, followers_count, friends_count,
-                    hashtags, user_mentions, place, place_coordinate)
-             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        sqlQuery = f"""INSERT INTO {table_name} (created_at, source, original_text, polarity, subjectivity, lang,
+                    favorite_count, retweet_count, original_author, followers_count, friends_count,
+                    hashtags, user_mentions, place)
+             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         data = (row[0], row[1], row[2], row[3], (row[4]), (row[5]), row[6], row[7], row[8], row[9], row[10], row[11],
-                row[12], row[13], row[14], row[15])
+                row[12], row[13])
 
         try:
             # Execute the SQL command
@@ -185,6 +185,5 @@ if __name__ == "__main__":
     emojiDB(dbName='tweets')
     createTables(dbName='tweets')
 
-    df = pd.read_csv('clean_processed_tweet_data.csv')
-
+    df = pd.read_csv('./clean_processed_tweet_data.csv')
     insert_to_tweet_table(dbName='tweets', df=df, table_name='TweetInformation')
